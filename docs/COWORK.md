@@ -1,4 +1,4 @@
-# Picking up qvick in a new Cowork session
+# Picking up penultimate in a new Cowork session
 
 Cross-project conventions are in `~/workspace/woodie/docs/COWORK.md`.
 
@@ -11,6 +11,12 @@ are Given/When/Then DSLs (jasmine-given, @hirez_io/jest-given), which replace
 `it` with `Then`, and given2/given3, which are lazy `let`, not a hook.
 Vitest's own `aroundEach` and fixtures both run *before* `beforeEach`, so
 neither can do this.
+
+## Name
+
+First called `qvick` (a pun on Quick, like `kwick`), renamed `penultimate`
+on 2026-10-15 before any tag or publish: the name says when the hook runs,
+second to last, right before the test, for readers who don't know Quick.
 
 ## Design decisions
 

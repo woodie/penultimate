@@ -1,5 +1,5 @@
 {
-  "name": "qvick",
+  "name": "penultimate",
   "version": "0.1.0",
   "description": "A justBeforeEach hook for Vitest, inspired by Quick",
   "keywords": [
@@ -16,10 +16,10 @@
   "author": "John Woodell <woodie@netpress.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/woodie/qvick.git"
+    "url": "git+https://github.com/woodie/penultimate.git"
   },
-  "homepage": "https://github.com/woodie/qvick#readme",
-  "bugs": "https://github.com/woodie/qvick/issues",
+  "homepage": "https://github.com/woodie/penultimate#readme",
+  "bugs": "https://github.com/woodie/penultimate/issues",
   "type": "module",
   "exports": {
     ".": {

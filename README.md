@@ -1,22 +1,23 @@
-# qvick
+# penultimate
 
 [![Vitest](https://img.shields.io/badge/Vitest-4.1+-6E9F18?logo=vitest&logoColor=white)](package.json)
-[![CI](https://github.com/woodie/qvick/actions/workflows/ci.yml/badge.svg)](https://github.com/woodie/qvick/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/woodie/qvick.svg)](https://github.com/woodie/qvick/releases/latest)
-[![License](https://img.shields.io/github/license/woodie/qvick.svg)](LICENSE)
+[![CI](https://github.com/woodie/penultimate/actions/workflows/ci.yml/badge.svg)](https://github.com/woodie/penultimate/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/woodie/penultimate.svg)](https://github.com/woodie/penultimate/releases/latest)
+[![License](https://img.shields.io/github/license/woodie/penultimate.svg)](LICENSE)
 
 A `justBeforeEach` hook for Vitest -- real nested `context`s with less
 duplication between them, inspired by [Quick](https://github.com/Quick/Quick).
-Works with Vitest 4.1 and later 4.x releases; Vitest 5 isn't supported yet
-(see [Requirements](#requirements)).
+The name says when it runs: penultimate, second to last, right before the
+test itself. Works with Vitest 4.1 and later 4.x releases; Vitest 5 isn't
+supported yet (see [Requirements](#requirements)).
 
 ## Installation
 
-`qvick` is only ever imported from test files, so it belongs in
+Since `penultimate` is only ever imported from test files, it belongs in
 `devDependencies`. Until it's published to npm, install it from GitHub:
 
 ```
-npm install --save-dev github:woodie/qvick#v0.1.0
+npm install --save-dev github:woodie/penultimate#v0.1.0
 ```
 
 There's nothing to register or configure -- import it and use it.
@@ -32,7 +33,7 @@ in the parent):
 
 ```js
 import { beforeEach, describe, expect, it } from 'vitest'
-import { justBeforeEach } from 'qvick'
+import { justBeforeEach } from 'penultimate'
 
 const context = describe
 
@@ -83,8 +84,8 @@ before the next.
 
 ## Works with Vitest's own `it`
 
-`qvick` doesn't replace `it` or `test` -- you keep importing them from
-`vitest`, so `it.each`, `it.skip`, `it.only`, `it.fails`, `it.concurrent`
+You keep importing `it` and `test` from `vitest`, since `penultimate`
+doesn't replace them, so `it.each`, `it.skip`, `it.only`, `it.fails`, `it.concurrent`
 and `retry` all behave as usual. Each test gets its own queue of
 `justBeforeEach` steps, so concurrent tests don't share them, and a retried
 test runs them again.
@@ -131,7 +132,7 @@ about.
 
 Vitest 4.1 or a later 4.x release, and Node 20 or later.
 
-`qvick` works by replacing each test's body with one that runs the queued
+Under the hood, `penultimate` works by replacing each test's body with one that runs the queued
 steps first, using `getFn` and `setFn` from `@vitest/runner`, which Vitest 4
 installs alongside itself. Vitest 5 bundles that package inside `vitest`
 instead, and the replacement it offers, `TestRunner.setTestFn`, currently
