@@ -35,13 +35,52 @@ second to last, right before the test, for readers who don't know Quick.
   `@vitest/runner` isn't installed and nothing public can set a test's body.
   Hence `vitest >=4.1.0 <5`.
 
-## Vitest 5 plan
+## Contributing upstream to Vitest
 
-1. PR to Vitest: `setTestFn = setFn`, `setSuiteHooks = setHooks`.
-2. Issue, then PR: a real `justBeforeEach` in Vitest, run by the runner right
-   after `callSuiteHook(..., 'beforeEach')`.
-3. Meanwhile, a custom runner (`test.runner`, overriding `runTask`) would
-   work on Vitest 5 at the cost of one line of config.
+On hold until `penultimate` is published to npm, so the issue can point at a
+real package. Researched 2026-10-15 against `main` at v5.0.5 (7a825db).
+
+**Order is forced by Vitest's PR policy** (CONTRIBUTING.md, "Pull Request
+Policy"): PRs are auto-closed unless they're for an issue labeled `approved`
+(or from an approved contributor). So: issue first, wait for `approved`, then
+PR from a fork with `Fixes #...`. Their AI_POLICY.md asks that issues and PR
+descriptions be written in Woodie's own voice, not pasted from Claude, and
+that he can explain every line. Claude gathers facts; Woodie writes the text.
+No existing issue mentioned `justBeforeEach` or `setTestFn` as of that date.
+
+1. **Bug issue first (small, easy to approve).** In
+   `packages/vitest/src/runtime/runners/test.ts` (lines ~291-292),
+   `static setSuiteHooks = getHooks` and `static setTestFn = getFn`: both
+   setters are aliased to their getters. They should be `setHooks`/`setFn`
+   (both exported from `runtime/runner/map.ts`). `vitest/suite`'s deprecation
+   warning points users at these. Fixing it is also what would let
+   `penultimate` work on Vitest 5 without a custom runner.
+2. **Feature issue: `justBeforeEach`.** Case: Quick, Ginkgo and RSpec-style
+   tools have it; `aroundEach` and fixtures both run *before* `beforeEach`, so
+   they can't do it; `penultimate` proves the behavior on 4.1 but has to reach
+   into runner internals, and on Vitest 5 it can't at all (bug above).
+3. **The PR, once approved** -- follows the shape `aroundEach` set in 4.1:
+   - `runtime/runner/types.ts`: add `justBeforeEach` to `SuiteHooks`.
+   - `runtime/runner/suite.ts`: initialize it to `[]` with the other hooks.
+   - `runtime/runner/hooks.ts`: `justBeforeEach()` cloned from
+     `beforeEach()` (timeout, fixtures, cleanup keys).
+   - `runtime/runner/run.ts`: call `callSuiteHook(..., 'justBeforeEach', ...)`
+     right after the `beforeEach` call (~line 633), and extend the
+     parent-first condition at ~line 188 (`name === 'beforeEach' &&
+     parentSuite`) to include it.
+   - `public/index.ts` export, plus `test/unit/test/exports.test.ts`.
+   - Docs: `docs/api/hooks.md`, and the order list in
+     `docs/guide/lifecycle.md`.
+   - Tests: `test/e2e/test/just-before-each.test.ts`, modeled on
+     `around-each.test.ts`: parent-first order, after every `beforeEach`,
+     re-run on retry, per-test with `concurrent`.
+
+Fork with `cd ~/workspace && gh repo fork vitest-dev/vitest --clone`; the
+monorepo needs `pnpm` (`pnpm install && pnpm build`, then
+`CI=true pnpm test <file>`).
+
+Until upstream lands, a custom runner (`test.runner`, overriding `runTask`)
+would work on Vitest 5 at the cost of one line of config.
 
 ## Gotchas
 
