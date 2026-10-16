@@ -72,12 +72,12 @@ describe('Calculator', () => {
 })
 ```
 
-`#divide` sets default inputs in an ordinary `beforeEach`, and each
+Here, `#divide` sets default inputs in an ordinary `beforeEach`, and each
 `context` overrides only the one it's about. The call itself can't go in
 that `beforeEach`, because Vitest runs a parent's `beforeEach` before its
 children's: it would divide 10 by 2 every time, before any `context` had
-changed an input. `justBeforeEach` runs after every `beforeEach` at every
-depth, so it always sees the final inputs, and each `it` just checks
+changed an input. Because `justBeforeEach` runs after every `beforeEach` at
+every depth, it always sees the final inputs, and each `it` just checks
 `result`. In RSpec terms, the defaults play the part of `let`, and
 `justBeforeEach` plays `subject`, which RSpec can leave lazy instead.
 
