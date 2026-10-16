@@ -42,40 +42,44 @@ describe('Calculator', () => {
 
   beforeEach(() => { calculator = new Calculator() })
 
-  context('with 5 entered', () => {
-    beforeEach(() => { calculator.enter(5) })
+  describe('#divide', () => {
+    let numerator, denominator, result
 
-    describe('#divideBy', () => {
-      let divisor
+    beforeEach(() => { numerator = 10; denominator = 2 })
 
-      justBeforeEach(() => { calculator.divideBy(divisor) })
+    justBeforeEach(() => { result = calculator.divide(numerator, denominator) })
 
-      context('when the divisor is 1', () => {
-        beforeEach(() => { divisor = 1 })
+    it('returns the quotient', () => {
+      expect(result).toBe(5)
+    })
 
-        it('has no remainder', () => {
-          expect(calculator.remainder()).toBe(0)
-        })
+    context('when the numerator leaves a remainder', () => {
+      beforeEach(() => { numerator = 7 })
+
+      it('drops the remainder', () => {
+        expect(result).toBe(3)
       })
+    })
 
-      context('when the divisor is 3', () => {
-        beforeEach(() => { divisor = 3 })
+    context('when the denominator is 1', () => {
+      beforeEach(() => { denominator = 1 })
 
-        it('has a remainder of 2', () => {
-          expect(calculator.remainder()).toBe(2)
-        })
+      it('returns the numerator', () => {
+        expect(result).toBe(10)
       })
     })
   })
 })
 ```
 
-`calculator.divideBy(divisor)` can't be an ordinary `beforeEach` at the
-`#divideBy` level, because Vitest always runs a parent's `beforeEach` before
-its children's: it would divide by whatever `divisor` was *before* the leaf
-`context` set it. `justBeforeEach` runs after every `beforeEach` at every
-depth, so `divisor` is always set first, and each `it` just asks
-`calculator` what's true now.
+`#divide` sets default inputs in an ordinary `beforeEach`, and each
+`context` overrides only the one it's about. The call itself can't go in
+that `beforeEach`, because Vitest runs a parent's `beforeEach` before its
+children's: it would divide 10 by 2 every time, before any `context` had
+changed an input. `justBeforeEach` runs after every `beforeEach` at every
+depth, so it always sees the final inputs, and each `it` just checks
+`result`. In RSpec terms, the defaults play the part of `let`, and
+`justBeforeEach` plays `subject`, which RSpec can leave lazy instead.
 
 When several `justBeforeEach` blocks apply to one test, they run outermost
 first, the same order as `beforeEach`. Each one gets the same test context
@@ -99,24 +103,32 @@ expectation runs, so the error-path `context` can't assert on it. Capture
 the outcome instead, and let each `it` check whichever half it cares about:
 
 ```js
-let scans, error
+describe('#divide', () => {
+  let numerator, denominator, result, error
 
-justBeforeEach(() => {
-  try { scans = parseListing(reply) } catch (e) { error = e }
-})
+  beforeEach(() => { numerator = 10; denominator = 2 })
 
-context('when the reply is a listing', () => {
-  beforeEach(() => { reply = listingXml; error = undefined })
+  justBeforeEach(() => {
+    result = error = undefined
+    try { result = calculator.divide(numerator, denominator) } catch (e) { error = e }
+  })
 
-  it('reads the files', () => { expect(scans).toHaveLength(1) })
-})
+  it('returns the quotient', () => {
+    expect(result).toBe(5)
+  })
 
-context("when the reply isn't XML", () => {
-  beforeEach(() => { reply = '<html>405 Not Allowed' })
+  context('when the denominator is 0', () => {
+    beforeEach(() => { denominator = 0 })
 
-  it('reports it', () => { expect(error.message).toBe('unreadable listing') })
+    it('reports it', () => {
+      expect(error.message).toBe('division by zero')
+    })
+  })
 })
 ```
+
+Clearing `result` and `error` at the top of the step means no test can see
+an outcome left over from the one before it.
 
 ## Scoping variables
 
