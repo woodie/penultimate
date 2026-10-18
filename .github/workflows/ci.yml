@@ -22,9 +22,7 @@ jobs:
 
   publish:
     needs: test
-    # Paused until npm account access is recovered; restore to:
-    # if: startsWith(github.ref, 'refs/tags/v')
-    if: false
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
       contents: read

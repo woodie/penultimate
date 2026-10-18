@@ -2,6 +2,7 @@
 
 [![Vitest](https://img.shields.io/badge/Vitest-4.1+-6E9F18?logo=vitest&logoColor=white)](package.json)
 [![CI](https://github.com/woodie/penultimate/actions/workflows/ci.yml/badge.svg)](https://github.com/woodie/penultimate/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/penultimate.svg)](https://www.npmjs.com/package/penultimate)
 [![Release](https://img.shields.io/github/v/release/woodie/penultimate.svg)](https://github.com/woodie/penultimate/releases/latest)
 [![License](https://img.shields.io/github/license/woodie/penultimate.svg)](LICENSE)
 
@@ -14,10 +15,10 @@ supported yet (see [Requirements](#requirements)).
 ## Installation
 
 Since `penultimate` is only ever imported from test files, it belongs in
-`devDependencies`. Until it's published to npm, install it from GitHub:
+`devDependencies`:
 
 ```
-npm install --save-dev github:woodie/penultimate#v0.1.0
+npm install --save-dev penultimate
 ```
 
 There's nothing to register or configure -- import it and use it.

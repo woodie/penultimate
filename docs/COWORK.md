@@ -15,8 +15,10 @@ neither can do this.
 ## Name
 
 First called `qvick` (a pun on Quick, like `kwick`), renamed `penultimate`
-on 2026-10-15 before any tag or publish: the name says when the hook runs,
+on 2026-10-15, before any npm publish: the name says when the hook runs,
 second to last, right before the test, for readers who don't know Quick.
+The `v0.1.0` tag predates the rename (its `package.json` still says
+`qvick`), so the first npm release is 0.1.1.
 
 ## Design decisions
 
@@ -91,5 +93,10 @@ would work on Vitest 5 at the cost of one line of config.
 
 ## Publishing
 
-Same as humane-ts: CI's `publish` job is paused (`if: false`) until npm
-account access is recovered. Until then, consumers install from a GitHub tag.
+Published to npm from the `mrjw` account, created 2026-10-18 while
+Woodie's original npm account stays locked; if that one is recovered, add
+it with `npm owner add`. The first publish (0.1.1) has to run from Woodie's
+Mac, since npm's trusted publishing is set up on an existing package's
+settings page (GitHub Actions, `woodie/penultimate`, `ci.yml`). After
+that, CI's `publish` job releases each `v*` tag through OIDC, with no npm
+token stored anywhere, and skips a version that's already on npm.
