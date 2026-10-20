@@ -87,6 +87,51 @@ first, the same order as `beforeEach`. Each one gets the same test context
 a `beforeEach` gets (`({ task }) => ...`), and an `async` one is awaited
 before the next.
 
+## Or call a function inside `it`
+
+For a calculation like `#divide`, a function that each `it` calls works
+just as well, since a test's body runs after every `beforeEach`:
+
+```js
+const divide = () => calculator.divide(numerator, denominator)
+
+it('returns the quotient', () => {
+  expect(divide()).toBe(5)
+})
+```
+
+That gets harder once the steps stack. In a page spec, a parent
+`describe` loads the page, a nested one clicks delete, and the tests
+inside check what happened: requests sent, alerts shown, the list
+redrawn. With functions, each level needs a wrapper that calls its
+parent's, and every `it` has to call the right one before asserting
+anything:
+
+```js
+const loaded = () => loadPage()
+const deleted = async () => { await loaded(); await clickDelete() }
+```
+
+With `justBeforeEach`, each `describe` adds its own step, the steps run
+outermost first after every `beforeEach`, and each `it` is a single
+assertion:
+
+```js
+justBeforeEach(loadPage)
+
+describe('clicking delete', () => {
+  justBeforeEach(clickDelete)
+
+  context('when cancelled', () => {
+    beforeEach(() => { confirmed = false })
+
+    it('deletes nothing', () => {
+      expect(requests('DELETE')).toHaveLength(0)
+    })
+  })
+})
+```
+
 ## Works with Vitest's own `it`
 
 You keep importing `it` and `test` from `vitest`, since `penultimate`
