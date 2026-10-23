@@ -99,7 +99,8 @@ would work on Vitest 5 at the cost of one line of config.
 CI's `publish` job releases each `v*` tag through npm trusted publishing
 (OIDC, no stored token), after tests pass. It checks that the tag matches
 `package.json`'s version and skips a version that's already on npm. The npm
-account (`mrjw`) is covered in `~/workspace/woodie/docs/COWORK.md`.
+accounts (`johnwoodell`, `mrjw`) are covered in
+`~/workspace/woodie/docs/COWORK.md`.
 
 ## Current status
 
