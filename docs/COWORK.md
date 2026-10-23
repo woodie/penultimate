@@ -33,14 +33,17 @@ The `v0.1.0` tag predates the rename (its `package.json` still says
 - **Import from `@vitest/runner`, not `TestRunner`.** Vitest 4.1 deprecated
   `vitest/suite` in favor of static methods on `TestRunner`, but
   `TestRunner.setTestFn` is defined as `getFn` (and `setSuiteHooks` as
-  `getHooks`) -- still true in 5.0.4. Vitest 5 also bundles the runner, so
+  `getHooks`) -- still true in 5.0.5. Vitest 5 also bundles the runner, so
   `@vitest/runner` isn't installed and nothing public can set a test's body.
   Hence `vitest >=4.1.0 <5`.
 
 ## Contributing upstream to Vitest
 
-On hold until `penultimate` is published to npm, so the issue can point at a
-real package. Researched 2026-10-15 against `main` at v5.0.5 (7a825db).
+Step 1 is filed: Woodie opened vitest-dev/vitest#11639 ("setTestFn bug")
+on 2026-10-19, after the npm publish. As of 2026-10-23 it's `pending
+triage`, with no comments and no `approved` label. Next: wait for
+`approved`, then file the feature issue (step 2). Researched 2026-10-15
+against `main` at v5.0.5 (7a825db), still the latest release on 2026-10-23.
 
 **Order is forced by Vitest's PR policy** (CONTRIBUTING.md, "Pull Request
 Policy"): PRs are auto-closed unless they're for an issue labeled `approved`
@@ -93,10 +96,14 @@ would work on Vitest 5 at the cost of one line of config.
 
 ## Publishing
 
-Published to npm from the `mrjw` account, created 2026-10-18 while
-Woodie's original npm account stays locked; if that one is recovered, add
-it with `npm owner add`. The first publish (0.1.1) has to run from Woodie's
-Mac, since npm's trusted publishing is set up on an existing package's
-settings page (GitHub Actions, `woodie/penultimate`, `ci.yml`). After
-that, CI's `publish` job releases each `v*` tag through OIDC, with no npm
-token stored anywhere, and skips a version that's already on npm.
+CI's `publish` job releases each `v*` tag through npm trusted publishing
+(OIDC, no stored token), after tests pass. It checks that the tag matches
+`package.json`'s version and skips a version that's already on npm. The npm
+account (`mrjw`) is covered in `~/workspace/woodie/docs/COWORK.md`.
+
+## Current status
+
+0.1.1 published to npm on 2026-10-18 from Woodie's Mac (the first release,
+before the trusted publisher could be configured); later tags publish from
+CI. Works on Vitest 4.1 only, until #11639 is fixed upstream or a custom
+runner is added. The upstream bug issue is open and waiting on triage.
